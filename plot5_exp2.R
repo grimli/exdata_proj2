@@ -15,14 +15,20 @@ SCC <- readRDS("Source_Classification_Code.rds")
 ## load library to get summarized values
 library(plyr)
 
+## Subset NEI data selecting baltimore
+NEI_Baltimore <- subset(NEI, fips==24510)
+
+## Remove variables to free space
+remove(NEI)
+
 ## Subset SCC data selecting EI Sector related  to Vehicles
 SCC_VEHICLES <- subset(SCC, EI.Sector %in% c("Mobile - Non-Road Equipment - Diesel" , "Mobile - Non-Road Equipment - Gasoline", "Mobile - Non-Road Equipment - Other","Mobile - On-Road Diesel Heavy Duty Vehicles", "Mobile - On-Road Diesel Light Duty Vehicles", "Mobile - On-Road Gasoline Heavy Duty Vehicles","Mobile - On-Road Gasoline Light Duty Vehicles"))
 
 ## Merge SCC and NEI data
-merged_data <- merge(NEI, SCC_VEHICLES , by = "SCC")
+merged_data <- merge(NEI_Baltimore, SCC_VEHICLES , by = "SCC")
 
 ## Remove variables to free space
-remove(NEI, SCC, SCC_VEHICLES)
+remove(SCC, SCC_VEHICLES, NEI_Baltimore)
 
 ## Calculate total values for each year
 tot_emissions <-  ddply(merged_data, .(year), summarize, totEmissions = sum(Emissions) )
